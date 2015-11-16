@@ -3,12 +3,25 @@ template<typename Key,typename T>
 class CMap
 {
 public:
-	T &operator[](key);
+	// this method will lookup if the key exists, if yes, then returns the value. 
+	// If the key does not exist: 1.check if there's space, 2. then create a new key value pair
+	T &operator[](Key);
+
 	CMap();
 	~CMap();
 
 private:
-	bool (*comp)(/* TODO: keys or values?*/)
+	struct MyPair
+	{
+
+	};
+	MyPair dict[];
+	int mMax;
+	int mCount;
+
+	void insert(Key newKey, T newVal);
+
+	bool equals(T);
 	// TODO: is this needed?
 	bool isUnique();
 	bool isFull();
