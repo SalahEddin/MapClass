@@ -1,11 +1,12 @@
 #pragma once
-template<typename Key,typename T>
+template<typename Key,typename Val>
 class CMap
 {
 public:
 	// this method will lookup if the key exists, if yes, then returns the value. 
 	// If the key does not exist: 1.check if there's space, 2. then create a new key value pair
-	T &operator[](Key);
+	Val operator[](Key);
+	// TODO overload assignment operator =
 
 	CMap();
 	~CMap();
@@ -13,24 +14,17 @@ public:
 private:
 	struct MyPair
 	{
-
+		Key k;
+		Val v;
 	};
-	MyPair dict[];
+	MyPair* dict[];
 	int mMax;
 	int mCount;
 
-	void insert(Key newKey, T newVal);
+	void insert(Key newKey, Val newVal);
 
-	bool equals(T);
+	bool equals(Key);
 	// TODO: is this needed?
 	bool isUnique();
 	bool isFull();
 };
-
-template<class Key, class T>CMap::CMap()
-{
-}
-
-template<class Key, class T>CMap::~CMap()
-{
-}

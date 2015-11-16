@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include "CMap.h"
 
 int main() {
 	std::map<std::string, int> stdMap;
@@ -8,5 +9,7 @@ int main() {
 	stdMap.clear();
 	std::cout << stdMap.size() << std::endl;
 	
+	CMap<std::string, int> myMap;
+	myMap["X"] = 1;
 	system("pause");
 }
