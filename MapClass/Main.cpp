@@ -1,18 +1,21 @@
 #include <iostream>
 #include <map>
 #include "CMap.h"
+#include "CBinTree.h"
 
 int main() {
-	std::map<std::string, int> stdMap;
+	/*std::map<std::string, int> stdMap;
 	stdMap["num"] = 5;
 	stdMap["num"] = 14;
 	stdMap.clear();
-	std::cout << stdMap.size() << std::endl;
-	
-	CMap<std::string, int> *myMap = new CMap<std::string, int>();
-	std::string foo = "x";
-	//myMap->insert(foo,5);
-	//auto c = (*myMap)[foo];
-	//std::cout << c << std::endl;
+	std::cout << stdMap.size() << std::endl;*/
+
+	CBinTree* test = new CBinTree();
+	test->Insert(5, "wow");
+	test->Insert(4, "wows");
+	test->Insert(2, "wowa");
+	test->Insert(6, "wowsasd");
+	test->Insert(1, "wowda");
+
 	system("pause");
 }
