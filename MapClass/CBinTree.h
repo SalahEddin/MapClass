@@ -9,7 +9,7 @@ public:
 	~CBinTree();
 
 private:
-
+	void Insert();
 };
 
 CBinTree::CBinTree()

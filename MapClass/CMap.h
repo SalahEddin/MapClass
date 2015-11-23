@@ -1,31 +1,32 @@
 #pragma once
 #ifndef CMAP
 #define CMAP
-template<typename Key,typename Val>
+
+#include <string>
+// generics will be key and value types
 class CMap
 {
 public:
 	// this method will lookup if the key exists, if yes, then returns the value. 
 	// If the key does not exist: 1.check if there's space, 2. then create a new key value pair
-	Val operator[](Key);
+	std::string operator[](int);
 	// TODO overload assignment operator =
-	void insert(Key newK, Val newV);
-	void erease(Key k);
+	void Insert(int, std::string);
+	void Erease(int);
 	CMap();
 	~CMap();
 
 private:
 	struct MyPair
 	{
-		Key k;
-		Val v;
+		int k;
+		std::string v;
 	};
 	
-	int mMax;
-	int mCount;
+	const int mMax;
 	MyPair* dict[];
 
-	bool equals(Key);
+	bool equals(int);
 	// TODO: is this needed?
 	bool isUnique();
 	bool isFull();
