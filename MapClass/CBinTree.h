@@ -23,6 +23,13 @@ public:
 	void Update(int, std::string);
 	void Erease(int);
 	std::string Get(int);
+	
+	// Operators
+
+	// this method will lookup if the key exists, if yes, then returns the value. 
+	// If the key does not exist: 1.check if there's space, 2. then create a new key value pair
+	std::string operator[](int);
+	// Construcor and destructors
 	CBinTree(const int);
 	~CBinTree();
 
@@ -74,6 +81,11 @@ void CBinTree::Update(int key, std::string newV)
 	_treeUpdate(ROOT_IDX,key, newV);
 }
 
+void CBinTree::Erease(int key)
+{
+	_treeUpdate(ROOT_IDX, key, "Deleted");
+}
+
 void CBinTree::_treeUpdate(int index, int key, std::string newV)
 {
 	if (index < _treeSize) {
@@ -116,6 +128,12 @@ void CBinTree::_treeInsert(int index, int newK, std::string newV) {
 			this->_treeInsert((index * 2) + 1, newK, newV);
 		}
 	}
+}
+
+inline std::string CBinTree::operator[](int key)
+{
+	return this->_treeGet(ROOT_IDX, key);
+	// if not found, then return some error
 }
 
 CBinTree::CBinTree(const int initSize = 25)
