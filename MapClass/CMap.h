@@ -1,34 +1,44 @@
 #pragma once
-#ifndef CMAP
-#define CMAP
+#ifndef CBINTREE
+#define CBINTREE
 
 #include <string>
-// generics will be key and value types
+
+#define ROOT_IDX 1
+#define INIT_MAP_SIZE 25
+
+
 class CMap
 {
-public:
-	// this method will lookup if the key exists, if yes, then returns the value. 
-	// If the key does not exist: 1.check if there's space, 2. then create a new key value pair
-	std::string operator[](int);
-	// TODO overload assignment operator =
-	void Insert(int, std::string);
-	void Erease(int);
-	CMap();
-	~CMap();
-
 private:
-	struct MyPair
+	struct StaticPair
 	{
-		int k;
-		std::string v;
+		int key;
+		std::string value;
+		StaticPair() {};
+		StaticPair(int newK, std::string newV) {
+			key = newK;
+			value = newV;
+		};
 	};
-	
-	const int mMax;
-	MyPair* dict[];
+	void _treeInsert(int, int, std::string);
+	void _treeUpdate(int, int, std::string);
+	std::string _treeGet(int, int);
+	StaticPair** _tree;
+	int _treeSize;
 
-	bool equals(int);
-	// TODO: is this needed?
-	bool isUnique();
-	bool isFull();
+public:
+	// CRUD functionality
+	void Insert(int, std::string);
+	void Update(int, std::string);
+	void Erease(int);
+	std::string Get(int);
+	// Operators
+	std::string operator[](int);
+	// Construcor and destructors
+	CMap(const int);
+	CMap() : CMap(INIT_MAP_SIZE) {};
+	~CMap();
 };
+
 #endif

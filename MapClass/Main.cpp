@@ -1,7 +1,6 @@
 #include <iostream>
 #include <map>
 #include "CMap.h"
-#include "CBinTree.h"
 
 int main() {
 	/*std::map<std::string, int> stdMap;
@@ -10,7 +9,7 @@ int main() {
 	stdMap.clear();
 	std::cout << stdMap.size() << std::endl;*/
 
-	CBinTree* test = new CBinTree();
+	CMap* test = new CMap();
 	test->Insert(5, "wow");
 	test->Insert(4, "wows");
 	test->Insert(2, "xxxxxxx");

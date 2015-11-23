@@ -21,15 +21,9 @@
     <ClCompile Include="CMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CBinTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CBinTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
