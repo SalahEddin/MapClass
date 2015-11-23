@@ -26,5 +26,8 @@
     <ClInclude Include="CMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CBinTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
