@@ -1,30 +1,36 @@
 #pragma once
-#ifndef CBINTREE
-#define CBINTREE
+#ifndef CMAP
+#define CMAP
 
 #include <string>
 
 #define ROOT_IDX 1
 #define INIT_MAP_SIZE 25
 
-
 class CMap
 {
 private:
+	// structure holding the key/value pair
+	// TODO StaticPair will become generic
 	struct StaticPair
 	{
 		int key;
 		std::string value;
+		// constructor for easier initialisation
 		StaticPair() {};
 		StaticPair(int newK, std::string newV) {
 			key = newK;
 			value = newV;
 		};
 	};
+	// inner CRUD functionality
 	void _treeInsert(int, int, std::string);
 	void _treeUpdate(int, int, std::string);
 	std::string _treeGet(int, int);
+	// Attributes
+	// array of pointers to StaticPair instances
 	StaticPair** _tree;
+	// keeps track of the array size
 	int _treeSize;
 
 public:

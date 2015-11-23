@@ -42,7 +42,6 @@ std::string CMap::_treeGet(int index, int key) {
 		{
 			// key is smaller than indexed pair, try left branch
 			return this->_treeGet(index * 2, key);
-
 		}
 	}
 	return nullptr;
@@ -107,6 +106,7 @@ std::string CMap::operator[](int key)
 ///////////////
 CMap::CMap(const int initSize = INIT_MAP_SIZE)
 {
+	// TODO size will be Dynamic
 	_tree = new StaticPair*[initSize];
 	// keep track of size
 	_treeSize = initSize;
@@ -119,4 +119,5 @@ CMap::CMap(const int initSize = INIT_MAP_SIZE)
 
 CMap::~CMap()
 {
+	// TODO clean memory
 }
