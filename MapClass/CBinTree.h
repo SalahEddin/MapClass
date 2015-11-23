@@ -22,16 +22,68 @@ public:
 	void Insert(int, std::string);
 	void Update(int, std::string);
 	void Erease(int);
-	void Get();
+	std::string Get(int);
 	CBinTree(const int);
 	~CBinTree();
 
 private:
 	void _treeInsert(int, int, std::string);
+	std::string _treeGet(int, int);
 	StaticPair** _tree;
 	int _treeSize;
 };
+std::string CBinTree::_treeGet(int index, int key) {
+	if (index < _treeSize) {
+		if (!(key < _tree[index]->key)) {
+			if (!(_tree[index]->key < key)) {
+				// equality (x < y && y < x)
+				return _tree[index]->value;
+			}
+			else
+			{
+				// key is bigger than indexed pair, try right branch
+				return this->_treeGet((index * 2) + 1, key);
+			}
+		}
+		if (!(_tree[index]->key < key))
+		{
+			// key is smaller than indexed pair, try left branch
+			return this->_treeGet(index * 2, key);
+			
+		}
+	}
+	return nullptr;
+}
+std::string CBinTree::Get(int key)
+{
+	return _treeGet(ROOT_IDX, key);
+}
 
+void CBinTree::Insert(int newK, std::string newV) {
+	// TODO first searches if key already exists, then updates it
+
+	// will call _treeInsert with index ROOT_IDX
+	// because tree node in array starts from 1
+	this->_treeInsert(ROOT_IDX, newK, newV);
+}
+
+void CBinTree::_treeInsert(int index, int newK, std::string newV) {
+	if (index < _treeSize) {
+		if (!_tree[index]) {
+			_tree[index] = new StaticPair(newK, newV);
+		}
+		else if (newK < _tree[index]->key)
+		{
+			//key less than node value, add to node[index] left branch
+			this->_treeInsert(index * 2, newK, newV);
+		}
+		else
+		{
+			//add to node[index] right branch
+			this->_treeInsert((index * 2) + 1, newK, newV);
+		}
+	}
+}
 CBinTree::CBinTree(const int initSize = 25)
 {
 	_tree = new StaticPair*[initSize];
@@ -46,30 +98,5 @@ CBinTree::CBinTree(const int initSize = 25)
 
 CBinTree::~CBinTree()
 {
-}
-
-void CBinTree::Insert(int newK, std::string newV) {
-	// TODO first searches if key already exists, then updates it
-
-	// will call _treeInsert with index ROOT_IDX
-	// because tree node in array starts from 1
-	this->_treeInsert(ROOT_IDX, newK, newV);
-}
-
-void CBinTree::_treeInsert(int index, int newK, std::string newV) {
-	if (!_tree[index]) {
-		_tree[index] = new StaticPair(newK, newV);
-	}
-	else if (newK < _tree[index]->key)
-	{
-		//key less than node value, add to node[index] left branch
-		this->_treeInsert(index * 2, newK, newV);
-	}
-	else
-	{
-		//add to node[index] right branch
-		this->_treeInsert((index * 2) + 1, newK, newV);
-	}
-
 }
 #endif

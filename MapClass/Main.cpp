@@ -13,9 +13,9 @@ int main() {
 	CBinTree* test = new CBinTree();
 	test->Insert(5, "wow");
 	test->Insert(4, "wows");
-	test->Insert(2, "wowa");
+	test->Insert(2, "xxxxxxx");
 	test->Insert(6, "wowsasd");
 	test->Insert(1, "wowda");
-
+	std::cout << test->Get(1);
 	system("pause");
 }
