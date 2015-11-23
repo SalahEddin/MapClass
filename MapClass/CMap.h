@@ -1,4 +1,6 @@
 #pragma once
+#ifndef CMAP
+#define CMAP
 template<typename Key,typename Val>
 class CMap
 {
@@ -7,7 +9,8 @@ public:
 	// If the key does not exist: 1.check if there's space, 2. then create a new key value pair
 	Val operator[](Key);
 	// TODO overload assignment operator =
-
+	void insert(Key newK, Val newV);
+	void erease(Key k);
 	CMap();
 	~CMap();
 
@@ -17,14 +20,14 @@ private:
 		Key k;
 		Val v;
 	};
-	MyPair* dict[];
+	
 	int mMax;
 	int mCount;
-
-	void insert(Key newKey, Val newVal);
+	MyPair* dict[];
 
 	bool equals(Key);
 	// TODO: is this needed?
 	bool isUnique();
 	bool isFull();
 };
+#endif

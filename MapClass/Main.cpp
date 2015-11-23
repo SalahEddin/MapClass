@@ -9,7 +9,10 @@ int main() {
 	stdMap.clear();
 	std::cout << stdMap.size() << std::endl;
 	
-	CMap<std::string, int> myMap;
-	myMap["X"] = 1;
+	CMap<std::string, int> *myMap = new CMap<std::string, int>();
+	std::string foo = "x";
+	//myMap->insert(foo,5);
+	//auto c = (*myMap)[foo];
+	//std::cout << c << std::endl;
 	system("pause");
 }

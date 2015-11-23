@@ -37,6 +37,11 @@ void CMap<Key, Val>::insert(Key newKey, Val newVal)
 }
 
 template<typename Key, typename Val>
+void CMap<Key, Val>::erease(Key k)
+{
+}
+
+template<typename Key, typename Val>
 bool CMap<Key, Val>::equals(Key item)
 {
 	return (this.k < item && item < this.k) ? true : false;
