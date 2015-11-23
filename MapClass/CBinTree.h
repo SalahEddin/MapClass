@@ -28,10 +28,12 @@ public:
 
 private:
 	void _treeInsert(int, int, std::string);
+	void _treeUpdate(int, int, std::string);
 	std::string _treeGet(int, int);
 	StaticPair** _tree;
 	int _treeSize;
 };
+
 std::string CBinTree::_treeGet(int index, int key) {
 	if (index < _treeSize) {
 		if (!(key < _tree[index]->key)) {
@@ -67,6 +69,37 @@ void CBinTree::Insert(int newK, std::string newV) {
 	this->_treeInsert(ROOT_IDX, newK, newV);
 }
 
+void CBinTree::Update(int key, std::string newV)
+{
+	_treeUpdate(ROOT_IDX,key, newV);
+}
+
+void CBinTree::_treeUpdate(int index, int key, std::string newV)
+{
+	if (index < _treeSize) {
+		if (!(key < _tree[index]->key)) {
+			if (!(_tree[index]->key < key)) {
+				// equality (x < y && y < x), update value
+				_tree[index]->value = newV;
+				return;
+			}
+			else
+			{
+				// key is bigger than indexed pair, try right branch
+				this->_treeUpdate((index * 2) + 1, key, newV);
+				return;
+			}
+		}
+		if (!(_tree[index]->key < key))
+		{
+			// key is smaller than indexed pair, try left branch
+			this->_treeUpdate(index * 2, key, newV);
+			return;
+
+		}
+	}
+}
+
 void CBinTree::_treeInsert(int index, int newK, std::string newV) {
 	if (index < _treeSize) {
 		if (!_tree[index]) {
@@ -84,6 +117,7 @@ void CBinTree::_treeInsert(int index, int newK, std::string newV) {
 		}
 	}
 }
+
 CBinTree::CBinTree(const int initSize = 25)
 {
 	_tree = new StaticPair*[initSize];

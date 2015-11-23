@@ -17,5 +17,7 @@ int main() {
 	test->Insert(6, "wowsasd");
 	test->Insert(1, "wowda");
 	std::cout << test->Get(1);
+	test->Update(1, "ZZZZZZZZZ");
+	std::cout << test->Get(1);
 	system("pause");
 }
