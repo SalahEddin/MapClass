@@ -26,25 +26,32 @@ void CMap::Erease(int key)
 // Inner CRUD
 ///////////////
 std::string CMap::_treeGet(int index, int key) {
-	if (index < _treeSize) {
-		if (!(key < _tree[index]->key)) {
-			if (!(_tree[index]->key < key)) {
-				// equality (x < y && y < x)
-				return _tree[index]->value;
-			}
-			else
-			{
-				// key is bigger than indexed pair, try right branch
-				return this->_treeGet((index * 2) + 1, key);
-			}
+
+	std::string result = "No Result Found";
+	while(index < _treeSize)
+	{
+		if(!(key <_tree[index]->key && _tree[index]->key < key))
+		{
+			// equality (x < y && y < x)
+			result = _tree[index]->value;
+			break;
 		}
-		if (!(_tree[index]->key < key))
+		else if(_tree[index]->key < key)
+		{
+			// key is bigger than indexed pair, try right branch
+			index = (index * 2) + 1;
+			continue;
+		}
+		else
 		{
 			// key is smaller than indexed pair, try left branch
-			return this->_treeGet(index * 2, key);
+			index = index * 2;
+			continue;
 		}
+
 	}
-	return nullptr;
+	// TODO handle not found
+	return result;
 }
 
 void CMap::_treeUpdate(int index, int key, std::string newV)

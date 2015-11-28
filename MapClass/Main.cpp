@@ -9,7 +9,7 @@ int main() {
 	stdMap.clear();
 	std::cout << stdMap.size() << std::endl;*/
 
-	CMap* test = new CMap();
+	auto test = new CMap();
 	test->Insert(5, "wow");
 	test->Insert(4, "wows");
 	test->Insert(2, "xxxxxxx");
