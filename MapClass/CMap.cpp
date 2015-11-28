@@ -76,9 +76,8 @@ void CMap::_treeUpdate(int index, int key, std::string newV)
 			index = index * 2;
 			continue;
 		}
-
 	}
-	// TODO handle not found
+	// TODO expand the array
 	return;
 }
 
@@ -135,4 +134,10 @@ CMap::CMap(const int initSize = INIT_MAP_SIZE)
 CMap::~CMap()
 {
 	// TODO clean memory
+	int index = 1;
+	while(index < _treeSize)
+	{
+		if (_tree[index])	delete _tree[index];
+		index++;
+	}
 }

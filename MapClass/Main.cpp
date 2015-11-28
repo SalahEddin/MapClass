@@ -19,5 +19,6 @@ int main() {
 	test->Update(1, "ZZZZZZZZZ");
 	test->Erease(1);
 	std::cout << test->Get(1);
+	delete test;
 	system("pause");
 }
