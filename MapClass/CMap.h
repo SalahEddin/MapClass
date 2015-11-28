@@ -7,6 +7,9 @@
 #define ROOT_IDX 1
 #define INIT_MAP_SIZE 25
 
+// TODO needs to changewhen switching to templates
+enum ProcessResult {Deleted=-1,NotFound=-2};
+
 class CMap
 {
 private:

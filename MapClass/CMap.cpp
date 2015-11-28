@@ -56,46 +56,54 @@ std::string CMap::_treeGet(int index, int key) {
 
 void CMap::_treeUpdate(int index, int key, std::string newV)
 {
-	if (index < _treeSize) {
-		if (!(key < _tree[index]->key)) {
-			if (!(_tree[index]->key < key)) {
-				// equality (x < y && y < x), update value
-				_tree[index]->value = newV;
-				return;
-			}
-			else
-			{
-				// key is bigger than indexed pair, try right branch
-				this->_treeUpdate((index * 2) + 1, key, newV);
-				return;
-			}
-		}
-		if (!(_tree[index]->key < key))
+	while (index < _treeSize)
+	{
+		if (!(key <_tree[index]->key && _tree[index]->key < key))
 		{
-			// key is smaller than indexed pair, try left branch
-			this->_treeUpdate(index * 2, key, newV);
-			return;
-
+			// equality (x < y && y < x)
+			_tree[index]->value = newV;
+			break;
 		}
-	}
-}
-
-void CMap::_treeInsert(int index, int newK, std::string newV) {
-	if (index < _treeSize) {
-		if (!_tree[index]) {
-			_tree[index] = new StaticPair(newK, newV);
-		}
-		else if (newK < _tree[index]->key)
+		else if (_tree[index]->key < key)
 		{
-			//key less than node value, add to node[index] left branch
-			this->_treeInsert(index * 2, newK, newV);
+			// key is bigger than indexed pair, try right branch
+			index = (index * 2) + 1;
+			continue;
 		}
 		else
 		{
-			//add to node[index] right branch
-			this->_treeInsert((index * 2) + 1, newK, newV);
+			// key is smaller than indexed pair, try left branch
+			index = index * 2;
+			continue;
 		}
+
 	}
+	// TODO handle not found
+	return;
+}
+
+void CMap::_treeInsert(int index, int newK, std::string newV) {
+	while (index < _treeSize)
+	{
+		if (!_tree[index]) {
+			_tree[index] = new StaticPair(newK, newV);
+		}
+		else if (_tree[index]->key < newK)
+		{
+			// key is bigger than indexed pair, try right branch
+			index = (index * 2) + 1;
+			continue;
+		}
+		else
+		{
+			// key is smaller than indexed pair, try left branch
+			index = index * 2;
+			continue;
+		}
+
+	}
+	// TODO handle not found
+	return;
 }
 //////////////////
 // Operators
