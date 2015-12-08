@@ -5,7 +5,7 @@
 #include <string>
 
 #define ROOT_IDX 1
-#define INIT_MAP_SIZE 25
+#define CHUNK_SIZE 2 //TODO: test with different sizes
 
 // TODO needs to changewhen switching to templates
 enum ProcessResult {Deleted=-1,NotFound=-2};
@@ -26,16 +26,34 @@ private:
 			value = newV;
 		};
 	};
+	// struct holding the fixed-size array
+	struct Chunk
+	{
+		StaticPair** data;
+		Chunk* next;
+		Chunk() {
+			data = new StaticPair*[CHUNK_SIZE];
+			next = nullptr;
+			// initialise values to nullptr
+			for (int i = 0; i < CHUNK_SIZE; i++)
+			{
+				data[i] = nullptr;
+			}
+		}
+	};
 	// inner CRUD functionality
 	void _treeInsert(int, int, std::string);
 	void _treeUpdate(int, int, std::string);
 	std::string _treeGet(int, int);
 	// Attributes
 	// array of pointers to StaticPair instances
-	StaticPair** _tree;
-	// keeps track of the array size
-	int _treeSize;
+	// TODO: switch to structure
+	// StaticPair** _tree;
 
+	// keeps track of the array size
+	int _numOfChunks;
+	// pointer to first chunk
+	Chunk* _root;
 public:
 	// CRUD functionality
 	void Insert(int, std::string);
@@ -45,8 +63,7 @@ public:
 	// Operators
 	std::string operator[](int);
 	// Construcor and destructors
-	CMap(const int);
-	CMap() : CMap(INIT_MAP_SIZE) {};
+	CMap();
 	~CMap();
 };
 

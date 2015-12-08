@@ -26,82 +26,116 @@ void CMap::Erease(int key)
 // Inner CRUD
 ///////////////
 std::string CMap::_treeGet(int index, int key) {
-
 	std::string result = "No Result Found";
-	while(index < _treeSize)
+	Chunk* chnkIte = _root;
+	// loop as long as there are more chunks
+	while (chnkIte)
 	{
-		if(!(key <_tree[index]->key && _tree[index]->key < key))
+		// search element within chunk
+		while (index < CHUNK_SIZE)
 		{
-			// equality (x < y && y < x)
-			result = _tree[index]->value;
-			break;
-		}
-		else if(_tree[index]->key < key)
-		{
-			// key is bigger than indexed pair, try right branch
-			index = (index * 2) + 1;
-			continue;
-		}
-		else
-		{
-			// key is smaller than indexed pair, try left branch
-			index = index * 2;
-			continue;
-		}
+			if (!(key < chnkIte->data[index]->key && chnkIte->data[index]->key < key))
+			{
+				// equality (x < y && y < x)
+				result = chnkIte->data[index]->value;
+				break;
+			}
+			else if (chnkIte->data[index]->key < key)
+			{
+				// key is bigger than indexed pair, try right branch
+				index = (index * 2) + 1;
+				continue;
+			}
+			else
+			{
+				// key is smaller than indexed pair, try left branch
+				index = index * 2;
+				continue;
+			}
 
+		}
+		// switch to next chunk
+		chnkIte = chnkIte->next;
+		index %= CHUNK_SIZE;
 	}
+
 	// TODO handle not found
 	return result;
 }
 
 void CMap::_treeUpdate(int index, int key, std::string newV)
 {
-	while (index < _treeSize)
+	Chunk* chnkIte = _root;
+	// loop as long as there are more chunks
+	while (chnkIte)
 	{
-		if (!(key <_tree[index]->key && _tree[index]->key < key))
+		while (index < CHUNK_SIZE)
 		{
-			// equality (x < y && y < x)
-			_tree[index]->value = newV;
-			break;
+			if (!(key <chnkIte->data[index]->key && chnkIte->data[index]->key < key))
+			{
+				// equality (x < y && y < x)
+				chnkIte->data[index]->value = newV;
+				break;
+			}
+			else if (chnkIte->data[index]->key < key)
+			{
+				// key is bigger than indexed pair, try right branch
+				index = (index * 2) + 1;
+				continue;
+			}
+			else
+			{
+				// key is smaller than indexed pair, try left branch
+				index = index * 2;
+				continue;
+			}
 		}
-		else if (_tree[index]->key < key)
-		{
-			// key is bigger than indexed pair, try right branch
-			index = (index * 2) + 1;
-			continue;
-		}
-		else
-		{
-			// key is smaller than indexed pair, try left branch
-			index = index * 2;
-			continue;
-		}
+		// switch to next chunk
+		chnkIte = chnkIte->next;
+		index %= CHUNK_SIZE;
 	}
-	// TODO expand the array
 	return;
 }
 
 void CMap::_treeInsert(int index, int newK, std::string newV) {
-	while (index < _treeSize)
-	{
-		if (!_tree[index]) {
-			_tree[index] = new StaticPair(newK, newV);
-		}
-		else if (_tree[index]->key < newK)
-		{
-			// key is bigger than indexed pair, try right branch
-			index = (index * 2) + 1;
-			continue;
-		}
-		else
-		{
-			// key is smaller than indexed pair, try left branch
-			index = index * 2;
-			continue;
-		}
 
+	Chunk* chnkIte = _root;
+	// loop as long as there are more chunks
+	while (chnkIte)
+	{
+		while (index < CHUNK_SIZE)
+		{
+			if (!chnkIte->data[index]) {
+				chnkIte->data[index] = new StaticPair(newK, newV);
+				return;
+			}
+			else if (chnkIte->data[index]->key < newK)
+			{
+				// key is bigger than indexed pair, try right branch
+				index = (index * 2) + 1;
+				continue;
+			}
+			else
+			{
+				// key is smaller than indexed pair, try left branch
+				index = index * 2;
+				continue;
+				// TODO: if index x 2 is bigger than the new array size
+			}
+
+		}
+		// switch to next chunk
+		chnkIte = chnkIte->next;
+		index %= CHUNK_SIZE;
 	}
-	// TODO handle not found
+	
+	// TODO expand to new chunk
+	// TODO _root not updating
+	// create new chunk
+	auto temp = new Chunk();
+	chnkIte = temp;
+	// insert item
+	chnkIte->data[index] = new StaticPair(newK, newV);
 	return;
 }
 //////////////////
@@ -118,26 +152,27 @@ std::string CMap::operator[](int key)
 ////////////////
 // Construcor and destructors
 ///////////////
-CMap::CMap(const int initSize = INIT_MAP_SIZE)
+CMap::CMap()
 {
-	// TODO size will be Dynamic
-	_tree = new StaticPair*[initSize];
-	// keep track of size
-	_treeSize = initSize;
-	// initialise values to nullptr
-	for (int i = 0; i < initSize; i++)
-	{
-		_tree[i] = nullptr;
-	}
+	_root = new Chunk();
 }
 
 CMap::~CMap()
 {
 	// TODO clean memory
+	Chunk* chnkIte = _root;
 	int index = 1;
-	while(index < _treeSize)
+	while(chnkIte)
 	{
-		if (_tree[index])	delete _tree[index];
-		index++;
+		while (index < CHUNK_SIZE)
+		{
+			if (chnkIte->data[index])	delete chnkIte->data[index];
+			index++;
+		}
+		// TODO: 0 indices in all chunk are not used BUG
+		index = 1;
+		// switch to next chunk
+		chnkIte = chnkIte->next;
 	}
+	
 }

@@ -15,10 +15,11 @@ int main() {
 	test->Insert(2, "xxxxxxx");
 	test->Insert(6, "wowsasd");
 	test->Insert(1, "wowda");
-	std::cout << test->Get(1);
+	std::cout << test->Get(1) << std::endl;
 	test->Update(1, "ZZZZZZZZZ");
+	std::cout << test->Get(1) << std::endl;
 	test->Erease(1);
-	std::cout << test->Get(1);
+	std::cout << test->Get(1) << std::endl;
 	delete test;
 	system("pause");
 }
