@@ -1,8 +1,6 @@
 #pragma once
-#ifndef CMAP
-#define CMAP
-
-#include <string>
+#ifndef CMAP_H
+#define CMAP_H
 
 #define ROOT_IDX 1
 #define CHUNK_SIZE (1024) //TODO: test with different sizes 1,2,3,5..2000
@@ -52,7 +50,7 @@ private:
 	chunkStruct* _root;
 public:
 	// CRUD functionality
-	K Get(K key);
+	V Get(K key);
 	void Insert(K newK, V newV);
 	void Update(K key, V newV);
 	void Erease(K key);
@@ -63,3 +61,5 @@ public:
 	~CMap();
 };
 #endif
+
+#include "CMap.cpp"

@@ -1,8 +1,10 @@
 #include "CMap.h"
+#ifndef CMAP_CPP
+#define CMAP_CPP
 
 #pragma region API
 template <typename K, typename V>
-K CMap<K, V>::Get(K key)
+V CMap<K, V>::Get(K key)
 {
 	return _treeGet(ROOT_IDX, key);
 }
@@ -201,3 +203,4 @@ CMap<K, V>::~CMap()
 
 }
 #pragma endregion
+#endif
