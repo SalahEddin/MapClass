@@ -1,38 +1,43 @@
 #include "CMap.h"
 
-std::string CMap::Get(int key)
+#pragma region API
+template <typename K, typename V>
+K CMap<K, V>::Get(K key)
 {
 	return _treeGet(ROOT_IDX, key);
 }
 
-void CMap::Insert(int newK, std::string newV) {
+template <typename K, typename V>
+void CMap<K, V>::Insert(K newK, V newV) {
 	// TODO first searches if key already exists, then updates it
 
 	// will call _treeInsert with index ROOT_IDX
 	// because tree node in array starts from 1
 	this->_treeInsert(ROOT_IDX, newK, newV);
 }
-
-void CMap::Update(int key, std::string newV)
+template <typename K, typename V>
+void CMap<K, V>::Update(K key, V newV)
 {
 	_treeUpdate(ROOT_IDX, key, newV);
 }
-
-void CMap::Erease(int key)
+template <typename K, typename V>
+void CMap<K, V>::Erease(K key)
 {
 	_treeUpdate(ROOT_IDX, key, "Deleted");
 }
-//////////////////
-// Inner CRUD
-///////////////
-std::string CMap::_treeGet(int init_index, int key) {
+#pragma endregion
 
-	std::string result = "No Result Found";
+#pragma region Inner CRUD
+template <typename K, typename V>
+V CMap<K, V>::_treeGet(int init_index, K key) const
+{
+
+	V result = NULL/*"No Result Found"*/;
 
 	bool isFound = false;
 	int tree_idx = init_index;
 	// loop as long as there are more chunks (and element is not found yet)
-	for (Chunk* chunkIte = _root; (chunkIte) && (!isFound); chunkIte = chunkIte->next)
+	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isFound); chunkIte = chunkIte->next)
 	{
 		// re-size chunk index
 		int chunk_idx = tree_idx%CHUNK_SIZE;
@@ -40,7 +45,7 @@ std::string CMap::_treeGet(int init_index, int key) {
 		while (chunk_idx < CHUNK_SIZE)
 		{
 			// TODO: better usage
-			StaticPair* item = chunkIte->data[chunk_idx];
+			pairStruct* item = chunkIte->data[chunk_idx];
 			// equality !(x < y) && !(y < x)
 			if (!(key < item->key) && !(item->key < key))
 			{
@@ -67,12 +72,14 @@ std::string CMap::_treeGet(int init_index, int key) {
 	return result;
 }
 
-void CMap::_treeUpdate(int init_index, int key, std::string newV)
+
+template <typename K, typename V>
+void CMap<K, V>::_treeUpdate(int init_index, K key, V newV) const
 {
 	bool isFound = false;
 	int tree_idx = init_index;
 	// loop as long as there are more chunks (and element is not found yet)
-	for (Chunk* chunkIte = _root; (chunkIte) && (!isFound); chunkIte = chunkIte->next)
+	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isFound); chunkIte = chunkIte->next)
 	{
 		// re-size chunk index
 		int chunk_idx = tree_idx%CHUNK_SIZE;
@@ -103,12 +110,13 @@ void CMap::_treeUpdate(int init_index, int key, std::string newV)
 	return;
 }
 
-void CMap::_treeInsert(int init_index, int newKey, std::string newVal) {
+template <typename K, typename V>
+void CMap<K, V>::_treeInsert(int init_index, K newKey, V newVal) {
 	bool isAssigned = false;
 	int tree_idx = init_index;
-	Chunk* previousChunk = nullptr;
+	chunkStruct* previousChunk = nullptr;
 	// loop as long as there are more chunks (and element is not found yet)
-	for (Chunk* chunkIte = _root; (chunkIte) && (!isAssigned); chunkIte = chunkIte->next)
+	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isAssigned); chunkIte = chunkIte->next)
 	{
 		// re-size chunk index
 		int chunk_idx = tree_idx%CHUNK_SIZE;
@@ -118,7 +126,7 @@ void CMap::_treeInsert(int init_index, int newKey, std::string newVal) {
 			// current init_index is empty
 			if (chunkIte->data[chunk_idx] == nullptr)
 			{
-				chunkIte->data[chunk_idx] = new StaticPair(newKey, newVal);
+				chunkIte->data[chunk_idx] = new pairStruct(newKey, newVal);
 				isAssigned = true;
 				break;
 			}
@@ -142,39 +150,41 @@ void CMap::_treeInsert(int init_index, int newKey, std::string newVal) {
 	if (!isAssigned)
 	{
 		// create new chunk
-		auto temp = new Chunk();
+		auto temp = new chunkStruct();
 		// connect it to the list
 		previousChunk->next = temp;
 		// increase the number of chunk counter
 		_numOfChunks++;
 		// add the element
-		temp->data[tree_idx%CHUNK_SIZE] = new StaticPair(newKey, newVal);
+		temp->data[tree_idx%CHUNK_SIZE] = new pairStruct(newKey, newVal);
 	}
 
 }
-//////////////////
-// Operators
-///////////////
-std::string CMap::operator[](int key)
+#pragma endregion
+
+#pragma region Operators
+template <typename K, typename V>
+V CMap<K, V>::operator[](K key)
 {
-	// this method will lookup if the key exists, if yes, then returns the value. 
+	// TODO this method will lookup if the key exists, if yes, then returns the value. 
 	// If the key does not exist: 1.check if there's space, 2. then create a new key value pair
 	return this->_treeGet(ROOT_IDX, key);
 	// if not found, then return some error
 }
+#pragma endregion
 
-////////////////
-// Construcor and destructors
-///////////////
-CMap::CMap() : _numOfChunks(0)
+#pragma region Construcor and destructors
+template <typename K, typename V>
+CMap<K, V>::CMap() : _numOfChunks(0)
 {
-	_root = new Chunk();
+	_root = new chunkStruct();
 }
 
-CMap::~CMap()
+template <typename K, typename V>
+CMap<K, V>::~CMap()
 {
 	// TODO clean memory
-	Chunk* chnkIte = _root;
+	chunkStruct* chnkIte = _root;
 	int index = 1;
 	while (chnkIte)
 	{
@@ -190,3 +200,4 @@ CMap::~CMap()
 	}
 
 }
+#pragma endregion
