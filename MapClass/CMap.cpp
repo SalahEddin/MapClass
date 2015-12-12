@@ -3,9 +3,12 @@
 #define CMAP_CPP
 
 #pragma region API
+
 template <typename K, typename V>
 V CMap<K, V>::Get(K key)
 {
+	// V val = _treeGet(ROOT_IDX, key);
+	// OutputDebugString(val);
 	return _treeGet(ROOT_IDX, key);
 }
 
@@ -46,7 +49,6 @@ V CMap<K, V>::_treeGet(int init_index, K key) const
 		// search element within chunk
 		while (chunk_idx < CHUNK_SIZE)
 		{
-			// TODO: better usage
 			pairStruct* item = chunkIte->data[chunk_idx];
 			// equality !(x < y) && !(y < x)
 			if (!(key < item->key) && !(item->key < key))
@@ -177,7 +179,7 @@ V CMap<K, V>::operator[](K key)
 
 #pragma region Construcor and destructors
 template <typename K, typename V>
-CMap<K, V>::CMap() : _numOfChunks(0)
+CMap<K, V>::CMap() : _numOfChunks(1)
 {
 	_root = new chunkStruct();
 }
@@ -185,22 +187,18 @@ CMap<K, V>::CMap() : _numOfChunks(0)
 template <typename K, typename V>
 CMap<K, V>::~CMap()
 {
-	// TODO clean memory
-	chunkStruct* chnkIte = _root;
-	int index = 1;
-	while (chnkIte)
+	for (chunkStruct* chunkIte = _root; chunkIte; chunkIte = chunkIte->next)
 	{
-		while (index < CHUNK_SIZE)
+		int chunk_idx = 0;
+		// search element within chunk
+		while (chunk_idx < CHUNK_SIZE)
 		{
-			if (chnkIte->data[index])	delete chnkIte->data[index];
-			index++;
+			if (chunkIte->data[chunk_idx])	delete chunkIte->data[chunk_idx];
+			chunk_idx++;
 		}
-		// TODO: 0 indices in all chunk are not used BUG
-		index = 1;
 		// switch to next chunk
-		chnkIte = chnkIte->next;
+		chunkIte = chunkIte->next;
 	}
-
 }
 #pragma endregion
 #endif
