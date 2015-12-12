@@ -5,7 +5,7 @@
 #include <string>
 
 #define ROOT_IDX 1
-#define CHUNK_SIZE 2 //TODO: test with different sizes
+#define CHUNK_SIZE (1024) //TODO: test with different sizes 1,2,3,5..2000
 
 // TODO needs to changewhen switching to templates
 enum ProcessResult {Deleted=-1,NotFound=-2};
@@ -33,12 +33,12 @@ private:
 		Chunk* next;
 		Chunk() {
 			data = new StaticPair*[CHUNK_SIZE];
-			next = nullptr;
 			// initialise values to nullptr
 			for (int i = 0; i < CHUNK_SIZE; i++)
 			{
 				data[i] = nullptr;
 			}
+			next = nullptr;
 		}
 	};
 	// inner CRUD functionality
