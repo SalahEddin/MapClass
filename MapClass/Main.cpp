@@ -1,7 +1,36 @@
 #include <iostream>
 #include "CMap.h"
+#include <cstdio>
+#include <ctime>
+#include <map>
+
+void stdMapTest();
+void myCMapTest();
 
 int main() {
+
+	std::clock_t start;
+	double duration;
+
+	start = std::clock();
+
+	stdMapTest();
+
+	duration = (std::clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
+
+	std::cout << "std::map required: " << duration << '\n';
+
+
+
+	start = std::clock();
+
+	myCMapTest();
+
+	duration = (std::clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
+
+	std::cout << "printf: " << duration << '\n';
+
+
 	/*std::map<std::string, int> stdMap;
 	stdMap["num"] = 5;
 	stdMap["num"] = 14;
@@ -28,4 +57,23 @@ int main() {
 	
 
 	system("pause");
+}
+
+void stdMapTest()
+{
+	std::map<int, int> stdMap;
+	// 300000 insertions
+	for (int i = 0; i < 30000; i++)
+	{
+		stdMap[i] = rand() % 5000;
+	}
+}
+void myCMapTest()
+{
+	CMap<int, int>* myMap = new CMap<int, int>();
+	// 3000 insertions
+	for (int i = 0; i < 30000; i++)
+	{
+		myMap->Insert(i, rand() % 5000);
+	}
 }

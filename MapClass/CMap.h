@@ -3,7 +3,7 @@
 #define CMAP_H
 
 #define ROOT_IDX 1
-#define CHUNK_SIZE (5)
+#define CHUNK_SIZE (100)
 
 // TODO needs to changewhen switching to templates
 enum ProcessResult {Deleted=-1,NotFound=-2};
@@ -16,9 +16,12 @@ private:
 	{
 		K key;
 		V value;
+		bool isDeleted;
 		// constructors for easier initialisation
-		pairStruct() {};
-		pairStruct(K newK, V newV) {
+		pairStruct(): isDeleted(false)
+		{};
+		pairStruct(K newK, V newV): isDeleted(false)
+		{
 			key = newK;
 			value = newV;
 		};
@@ -39,9 +42,10 @@ private:
 		}
 	};
 	// inner CRUD functionality
-	V _treeGet(int init_index, K key) const;
-	void _treeUpdate(int init_index, K key, V newV) const;
+	V _treeGet(int init_index, K key);
+	void _treeUpdate(int init_index, K key, V newV);
 	void _treeInsert(int init_index, K newKey, V newVal);
+	void _treeDelete(int init_index, K key);
 	// Attributes
 
 	// keeps track of the array size
