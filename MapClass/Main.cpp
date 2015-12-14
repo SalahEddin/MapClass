@@ -4,7 +4,7 @@
 #include <ctime>
 #include <map>
 
-#define PROCESS_COUNT 3000
+#define PROCESS_COUNT 300
 void stdMapTest();
 void myCMapTest();
 
@@ -29,7 +29,7 @@ int main() {
 
 	duration = (std::clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
 
-	std::cout << "std::map required: " << duration << '\n';
+	std::cout << "my map required: " << duration << '\n';
 
 	/*std::map<std::string, int> stdMap;
 	stdMap["num"] = 5;
@@ -68,14 +68,18 @@ void stdMapTest()
 		stdMap[i] = rand() % PROCESS_COUNT;
 	}
 }
+
 void myCMapTest()
 {
 	CMap<int, int>* myMap = new CMap<int, int>();
 	// 3000 insertions
 	for (int i = 0; i < PROCESS_COUNT; i++)
 	{
+		int key_i = rand() % PROCESS_COUNT;
 		// my implementation uses trees in opposition to balanced trees
 		// so it performs better when elements aren't ordered
-		myMap->Insert(rand() % PROCESS_COUNT, rand() % PROCESS_COUNT);
+		myMap->Insert(key_i, rand() % PROCESS_COUNT);
+		// myMap->Update(key_i, rand() % PROCESS_COUNT);
 	}
+	delete myMap;
 }
