@@ -64,6 +64,7 @@ public:
 	CMap();
 	~CMap();
 };
+// TODO Switch to ProcessResult::enum
 #endif
 
 #include "CMap.cpp"

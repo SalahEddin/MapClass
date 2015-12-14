@@ -41,34 +41,47 @@ V CMap<K, V>::_treeGet(int init_index, K key)
 
 	bool isFound = false;
 	int tree_idx = init_index;
+	int inner_chunk_idx = tree_idx;
+	int chunk_number = 0;
 	// loop as long as there are more chunks (and element is not found yet)
-	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isFound); chunkIte = chunkIte->next)
+	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isFound);)
 	{
-		// re-size chunk index
-		int chunk_idx = tree_idx%CHUNK_SIZE;
-		// search element within chunk
-		while (chunk_idx < CHUNK_SIZE)
+		//////////////////////////////
+		// move to next chunk (allocate if needed)
+		for (int chunk_steps = 0; chunk_steps < (inner_chunk_idx / CHUNK_SIZE) - chunk_number; chunk_steps++)
 		{
-			pairStruct* item = chunkIte->data[chunk_idx];
-			// equality !(x < y) && !(y < x)
-			if (!(key < item->key) && !(item->key < key))
+			if (!chunkIte->next)
 			{
-				result = item->value;
-				isFound = true;
-				break;
+				throw; // the key doesn't exist
 			}
-			// key is bigger than indexed pair, try right branch
-			if (item->key < key)
+			chunkIte = chunkIte->next;
+			if (chunk_steps == (inner_chunk_idx / CHUNK_SIZE) - chunk_number - 1)
+				chunk_number += chunk_steps + 1;
+		}
+		// re-size chunk index
+		inner_chunk_idx = tree_idx%CHUNK_SIZE;
+
+		//////////////////////////////
+		// search element within chunk
+		while (inner_chunk_idx < CHUNK_SIZE)
+		{
+			// current index is holding the same key, update the value
+			if (chunkIte->data[inner_chunk_idx] != nullptr)
 			{
-				tree_idx = (tree_idx * 2) + 1;
-				chunk_idx = tree_idx;
+				if (!(key < chunkIte->data[inner_chunk_idx]->key) && !(chunkIte->data[inner_chunk_idx]->key < key))
+				{
+					// found the element
+					result = chunkIte->data[inner_chunk_idx]->value;
+					isFound = true;
+					break;
+				}
 			}
-			// key is smaller than indexed pair, try left branch
-			else
-			{
-				tree_idx = tree_idx * 2;
-				chunk_idx = tree_idx;
-			}
+			// assume key is smaller than indexed pair, try left branch
+			tree_idx = tree_idx * 2;
+			// if key is bigger than indexed pair, try right branch
+			if (chunkIte->data[inner_chunk_idx]->key < key)
+				tree_idx += 1;
+			inner_chunk_idx = tree_idx;
 		}
 	}
 
@@ -124,51 +137,7 @@ void CMap<K, V>::_treeUpdate(int init_index, K key, V newV)
 			inner_chunk_idx = tree_idx;
 		}
 	}
-	return;
-
-
-
-
-
-
-
-
-
-
-
-
-	bool isFound = false;
-	// int tree_idx = init_index;
-	// loop as long as there are more chunks (and element is not found yet)
-	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isFound); chunkIte = chunkIte->next)
-	{
-		// re-size chunk index
-		int chunk_idx = tree_idx%CHUNK_SIZE;
-		// search element within chunk
-		while (chunk_idx < CHUNK_SIZE)
-		{
-			// equality !(x < y) && !(y < x)
-			if (!(key < chunkIte->data[chunk_idx]->key) && !(chunkIte->data[chunk_idx]->key < key))
-			{
-				chunkIte->data[chunk_idx]->value = newV;
-				isFound = true;
-				break;
-			}
-			// key is bigger than indexed pair, try right branch
-			if (chunkIte->data[chunk_idx]->key < key)
-			{
-				tree_idx = (tree_idx * 2) + 1;
-				chunk_idx = tree_idx;
-			}
-			// key is smaller than indexed pair, try left branch
-			else
-			{
-				tree_idx = tree_idx * 2;
-				chunk_idx = tree_idx;
-			}
-		}
-	}
-	return;
+	//TODO return success
 }
 
 template <typename K, typename V>
@@ -232,38 +201,51 @@ void CMap<K, V>::_treeInsert(int init_index, K newKey, V newVal) {
 template <typename K, typename V>
 void CMap<K, V>::_treeDelete(int init_index, K key)
 {
-	bool isFound = false;
+	bool isUpdated = false;
 	int tree_idx = init_index;
+	int inner_chunk_idx = tree_idx;
+	int chunk_number = 0;
 	// loop as long as there are more chunks (and element is not found yet)
-	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isFound); chunkIte = chunkIte->next)
+	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isUpdated);)
 	{
-		// re-size chunk index
-		int chunk_idx = tree_idx%CHUNK_SIZE;
-		// search element within chunk
-		while (chunk_idx < CHUNK_SIZE)
+		//////////////////////////////
+		// move to next chunk (allocate if needed)
+		for (int chunk_steps = 0; chunk_steps < (inner_chunk_idx / CHUNK_SIZE) - chunk_number; chunk_steps++)
 		{
-			// equality !(x < y) && !(y < x)
-			if (!(key < chunkIte->data[chunk_idx]->key) && !(chunkIte->data[chunk_idx]->key < key))
+			if (!chunkIte->next)
 			{
-				chunkIte->data[chunk_idx]->isDeleted = true;
-				isFound = true;
-				break;
+				throw; // the key doesn't exist
 			}
-			// key is bigger than indexed pair, try right branch
-			if (chunkIte->data[chunk_idx]->key < key)
+			chunkIte = chunkIte->next;
+			if (chunk_steps == (inner_chunk_idx / CHUNK_SIZE) - chunk_number - 1)
+				chunk_number += chunk_steps + 1;
+		}
+		// re-size chunk index
+		inner_chunk_idx = tree_idx%CHUNK_SIZE;
+
+		//////////////////////////////
+		// search element within chunk
+		while (inner_chunk_idx < CHUNK_SIZE)
+		{
+			// current index is holding the same key, update the value
+			if (chunkIte->data[inner_chunk_idx] != nullptr)
 			{
-				tree_idx = (tree_idx * 2) + 1;
-				chunk_idx = tree_idx;
+				if (!(key < chunkIte->data[inner_chunk_idx]->key) && !(chunkIte->data[inner_chunk_idx]->key < key))
+				{
+					chunkIte->data[inner_chunk_idx]->isDeleted = true;
+					isUpdated = true;
+					break;
+				}
 			}
-			// key is smaller than indexed pair, try left branch
-			else
-			{
-				tree_idx = tree_idx * 2;
-				chunk_idx = tree_idx;
-			}
+			// assume key is smaller than indexed pair, try left branch
+			tree_idx = tree_idx * 2;
+			// if key is bigger than indexed pair, try right branch
+			if (chunkIte->data[inner_chunk_idx]->key < key)
+				tree_idx += 1;
+			inner_chunk_idx = tree_idx;
 		}
 	}
-	return;
+	//TODO return success
 }
 #pragma endregion
 

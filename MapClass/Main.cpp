@@ -15,21 +15,19 @@ int main() {
 
 	start = std::clock();
 
-	// stdMapTest();
 	myCMapTest();
 
 	duration = (std::clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
+	std::cout << "my map required: " << duration << " to insert, update and delete " <<'\n';
 
-	std::cout << "std::map required: " << duration << '\n';
 
 	start = std::clock();
 
-	// stdMapTest();
-	myCMapTest();
+	stdMapTest();
 
 	duration = (std::clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
+	std::cout << "std::map required: " << duration << " to insert, update and delete " << '\n';
 
-	std::cout << "my map required: " << duration << '\n';
 
 	/*std::map<std::string, int> stdMap;
 	stdMap["num"] = 5;
@@ -61,12 +59,15 @@ int main() {
 
 void stdMapTest()
 {
-	std::map<int, int> stdMap;
+	std::map<int, std::string>* stdMap = new std::map<int, std::string>;
 	// PROCESS_COUNT insertions
 	for (int i = 0; i < PROCESS_COUNT; i++)
 	{
-		stdMap[i] = rand() % PROCESS_COUNT;
+		(*stdMap)[i] = rand() % PROCESS_COUNT;
+		(*stdMap)[i] = rand() % PROCESS_COUNT;
+		(*stdMap)[i];
 	}
+	delete stdMap;
 }
 
 void myCMapTest()
@@ -79,7 +80,9 @@ void myCMapTest()
 		// my implementation uses trees in opposition to balanced trees
 		// so it performs better when elements aren't ordered
 		myMap->Insert(key_i, rand() % PROCESS_COUNT);
-		// myMap->Update(key_i, rand() % PROCESS_COUNT);
+		myMap->Update(key_i, rand() % PROCESS_COUNT);
+		myMap[key_i + 1];
+		
 	}
 	delete myMap;
 }
