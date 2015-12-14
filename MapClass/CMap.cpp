@@ -119,15 +119,15 @@ void CMap<K, V>::_treeInsert(int init_index, K newKey, V newVal) {
 	bool isAssigned = false;
 	int tree_idx = init_index;
 	int inner_chunk_idx = tree_idx;
-	chunkStruct* previousChunk = nullptr;
+	int chunk_number = 0;
 	// loop as long as there are more chunks (and element is not found yet)
 	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isAssigned);)
 	{
-		// make sure we're in the right chunk, this might occurs when index*2 is larger than the chunk size
-		for (int chunk_steps = 0; chunk_steps < inner_chunk_idx / CHUNK_SIZE; chunk_steps++)
+		//////////////////////////////
+		// move to next chunk (allocate if needed)
+		for (int chunk_steps = 0; chunk_steps < (inner_chunk_idx / CHUNK_SIZE)- chunk_number; chunk_steps++)
 		{
-			previousChunk = chunkIte;	// previous chunk points to current chunk, before chunkIte changes
-			if (chunkIte->next == nullptr)
+			if (!chunkIte->next)
 			{
 				//create new chunk, add it to the list
 				chunkIte->next = new chunkStruct();
@@ -135,6 +135,8 @@ void CMap<K, V>::_treeInsert(int init_index, K newKey, V newVal) {
 				_numOfChunks++;
 			}
 			chunkIte = chunkIte->next;
+			if(chunk_steps == (inner_chunk_idx / CHUNK_SIZE) - chunk_number-1)
+				chunk_number+= chunk_steps+1;
 		}
 		// re-size chunk index
 		inner_chunk_idx = tree_idx%CHUNK_SIZE;
@@ -143,6 +145,16 @@ void CMap<K, V>::_treeInsert(int init_index, K newKey, V newVal) {
 		// search element within chunk
 		while (inner_chunk_idx < CHUNK_SIZE)
 		{
+			// current index is holding the same key, update the value
+			if (chunkIte->data[inner_chunk_idx] != nullptr)
+			{
+				if (chunkIte->data[inner_chunk_idx]->key == newKey)
+				{
+					chunkIte->data[inner_chunk_idx]->value = newVal;
+					isAssigned = true;
+					break;
+				}
+			}
 			// current index is empty
 			if (chunkIte->data[inner_chunk_idx] == nullptr)
 			{
@@ -157,8 +169,6 @@ void CMap<K, V>::_treeInsert(int init_index, K newKey, V newVal) {
 				tree_idx += 1;
 			inner_chunk_idx = tree_idx;
 		}
-		// previous points to current chunk, before chunkIte changes
-		previousChunk = chunkIte;
 	}
 }
 

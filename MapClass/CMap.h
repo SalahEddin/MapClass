@@ -3,7 +3,7 @@
 #define CMAP_H
 
 #define ROOT_IDX 1
-#define CHUNK_SIZE (100)
+#define CHUNK_SIZE (5)
 
 // TODO needs to changewhen switching to templates
 enum ProcessResult {Deleted=-1,NotFound=-2};
