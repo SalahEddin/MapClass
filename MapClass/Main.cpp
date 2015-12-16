@@ -18,7 +18,7 @@ int main() {
 	myMap->Insert("B", 12);
 	std::cout << myMap->Get("A");
 	auto x = "A";
-	myMap[x];
+	myMap[x]; // Error
 
 	delete myMap;
 	/*std::clock_t start;
