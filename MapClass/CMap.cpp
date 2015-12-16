@@ -3,7 +3,7 @@
 #define CMAP_CPP
 
 #pragma region API
-
+// TODO return types success/failed
 template <typename K, typename V>
 V CMap<K, V>::Get(K key)
 {
@@ -11,7 +11,6 @@ V CMap<K, V>::Get(K key)
 	// OutputDebugString(val);
 	return _treeGet(ROOT_IDX, key);
 }
-
 template <typename K, typename V>
 void CMap<K, V>::Insert(K newK, V newV) {
 	// TODO first searches if key already exists, then updates it
@@ -37,14 +36,14 @@ template <typename K, typename V>
 V CMap<K, V>::_treeGet(int init_index, K key)
 {
 
-	V result = NULL/*"No Result Found"*/;
+	V result = NULL;
 
-	bool isFound = false;
+	ProcessResult process_result = ProcessResult::EMPTY;
 	int tree_idx = init_index;
 	int inner_chunk_idx = tree_idx;
 	int chunk_number = 0;
 	// loop as long as there are more chunks (and element is not found yet)
-	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isFound);)
+	for (chunkStruct* chunkIte = _root; (chunkIte) && (process_result == ProcessResult::EMPTY);)
 	{
 		//////////////////////////////
 		// move to next chunk (allocate if needed)
@@ -72,7 +71,7 @@ V CMap<K, V>::_treeGet(int init_index, K key)
 				{
 					// found the element
 					result = chunkIte->data[inner_chunk_idx]->value;
-					isFound = true;
+					process_result = ProcessResult::FOUND;
 					break;
 				}
 			}
@@ -89,16 +88,15 @@ V CMap<K, V>::_treeGet(int init_index, K key)
 	return result;
 }
 
-
 template <typename K, typename V>
-void CMap<K, V>::_treeUpdate(int init_index, K key, V newV) 
+ProcessResult CMap<K, V>::_treeUpdate(int init_index, K key, V newV)
 {
-	bool isUpdated = false;
+	ProcessResult process_result = ProcessResult::EMPTY;
 	int tree_idx = init_index;
 	int inner_chunk_idx = tree_idx;
 	int chunk_number = 0;
 	// loop as long as there are more chunks (and element is not found yet)
-	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isUpdated);)
+	for (chunkStruct* chunkIte = _root; (chunkIte) && (process_result == ProcessResult::EMPTY);)
 	{
 		//////////////////////////////
 		// move to next chunk (allocate if needed)
@@ -106,7 +104,7 @@ void CMap<K, V>::_treeUpdate(int init_index, K key, V newV)
 		{
 			if (!chunkIte->next)
 			{
-				throw; // the key doesn't exist
+				process_result = ProcessResult::NOT_FOUND; // the key doesn't exist
 			}
 			chunkIte = chunkIte->next;
 			if (chunk_steps == (inner_chunk_idx / CHUNK_SIZE) - chunk_number - 1)
@@ -124,8 +122,8 @@ void CMap<K, V>::_treeUpdate(int init_index, K key, V newV)
 			{
 				if (!(key < chunkIte->data[inner_chunk_idx]->key) && !(chunkIte->data[inner_chunk_idx]->key < key))
 				{
+					process_result = ProcessResult::UPDATED;
 					chunkIte->data[inner_chunk_idx]->value = newV;
-					isUpdated = true;
 					break;
 				}
 			}
@@ -137,17 +135,17 @@ void CMap<K, V>::_treeUpdate(int init_index, K key, V newV)
 			inner_chunk_idx = tree_idx;
 		}
 	}
-	//TODO return success
+	return process_result;
 }
 
 template <typename K, typename V>
-void CMap<K, V>::_treeInsert(int init_index, K newKey, V newVal) {
-	bool isAssigned = false;
+ProcessResult CMap<K, V>::_treeInsert(int init_index, K newKey, V newVal) {
+	ProcessResult process_result = ProcessResult::EMPTY;
 	int tree_idx = init_index;
 	int inner_chunk_idx = tree_idx;
 	int chunk_number = 0;
 	// loop as long as there are more chunks (and element is not found yet)
-	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isAssigned);)
+	for (chunkStruct* chunkIte = _root; (chunkIte) && (process_result == ProcessResult::EMPTY);)
 	{
 		//////////////////////////////
 		// move to next chunk (allocate if needed)
@@ -177,15 +175,17 @@ void CMap<K, V>::_treeInsert(int init_index, K newKey, V newVal) {
 				if (!(newKey < chunkIte->data[inner_chunk_idx]->key) && !(chunkIte->data[inner_chunk_idx]->key < newKey))
 				{
 					chunkIte->data[inner_chunk_idx]->value = newVal;
-					isAssigned = true;
+					process_result = ProcessResult::UPDATED;
 					break;
 				}
 			}
 			// current index is empty
 			if (chunkIte->data[inner_chunk_idx] == nullptr)
 			{
+				// create new element
 				chunkIte->data[inner_chunk_idx] = new pairStruct(newKey, newVal);
-				isAssigned = true;
+				_numOfitems++;
+				process_result = ProcessResult::INSERTED;
 				break;
 			}
 			// assume key is smaller than indexed pair, try left branch
@@ -196,17 +196,18 @@ void CMap<K, V>::_treeInsert(int init_index, K newKey, V newVal) {
 			inner_chunk_idx = tree_idx;
 		}
 	}
+	return process_result;
 }
 
 template <typename K, typename V>
-void CMap<K, V>::_treeDelete(int init_index, K key)
+ProcessResult CMap<K, V>::_treeDelete(int init_index, K key)
 {
-	bool isUpdated = false;
+	ProcessResult process_result = ProcessResult::EMPTY;
 	int tree_idx = init_index;
 	int inner_chunk_idx = tree_idx;
 	int chunk_number = 0;
 	// loop as long as there are more chunks (and element is not found yet)
-	for (chunkStruct* chunkIte = _root; (chunkIte) && (!isUpdated);)
+	for (chunkStruct* chunkIte = _root; (chunkIte) && (process_result == ProcessResult::EMPTY);)
 	{
 		//////////////////////////////
 		// move to next chunk (allocate if needed)
@@ -233,7 +234,7 @@ void CMap<K, V>::_treeDelete(int init_index, K key)
 				if (!(key < chunkIte->data[inner_chunk_idx]->key) && !(chunkIte->data[inner_chunk_idx]->key < key))
 				{
 					chunkIte->data[inner_chunk_idx]->isDeleted = true;
-					isUpdated = true;
+					process_result = ProcessResult::DELETED;
 					break;
 				}
 			}
@@ -245,24 +246,24 @@ void CMap<K, V>::_treeDelete(int init_index, K key)
 			inner_chunk_idx = tree_idx;
 		}
 	}
-	//TODO return success
+	return process_result;
 }
 #pragma endregion
 
 #pragma region Operators
 template <typename K, typename V>
-V CMap<K, V>::operator[](K key)
+V CMap<K, V>::operator[](K& key)
 {
 	// TODO this method will lookup if the key exists, if yes, then returns the value. 
 	// If the key does not exist: 1.check if there's space, 2. then create a new key value pair
-	return this->_treeGet(ROOT_IDX, key);
+	return _treeGet(ROOT_IDX, key);
 	// if not found, then return some error
 }
 #pragma endregion
 
 #pragma region Construcor and destructors
 template <typename K, typename V>
-CMap<K, V>::CMap() : _numOfChunks(1)
+CMap<K, V>::CMap() : _numOfChunks(1), _numOfitems(0)
 {
 	_root = new chunkStruct();
 }

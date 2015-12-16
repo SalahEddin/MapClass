@@ -3,14 +3,25 @@
 #include <cstdio>
 #include <ctime>
 #include <map>
+#include <string>
 
-#define PROCESS_COUNT 300
+#define PROCESS_COUNT (300)
 void stdMapTest();
 void myCMapTest();
 
 int main() {
 
-	std::clock_t start;
+
+	CMap<std::string, int>* myMap = new CMap<std::string, int>();
+	
+	myMap->Insert("A",12);
+	myMap->Insert("B", 12);
+	std::cout << myMap->Get("A");
+	auto x = "A";
+	myMap[x];
+
+	delete myMap;
+	/*std::clock_t start;
 	double duration;
 
 	start = std::clock();
@@ -26,40 +37,14 @@ int main() {
 	stdMapTest();
 
 	duration = (std::clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
-	std::cout << "std::map required: " << duration << " to insert, update and delete " << '\n';
-
-
-	/*std::map<std::string, int> stdMap;
-	stdMap["num"] = 5;
-	stdMap["num"] = 14;
-	stdMap.clear();
-	std::cout << stdMap.size() << std::endl;*/
-	std::string val;
-	CMap<int, int>* test = new CMap<int, int>();
-	/*test->Insert(5, "wow");
-	test->Insert(4, "wows");
-	test->Insert(2, "xxxxxxx");
-	test->Insert(6, "wowsasd");
-	test->Insert(1, "wowda");*/
-	test->Insert(5, 223344);
-	test->Insert(4, 1234);
-	test->Insert(2, 4230);
-	test->Insert(6, 97979);
-	test->Insert(1, 23323322);
-	std::cout << test->Get(1) << std::endl;;
-	test->Update(1, 10101010);
-	std::cout << test->Get(1) << std::endl;;
-	// test->Erease(1);
-	//test->Get(1);
-	delete test;
-	
+	std::cout << "std::map required: " << duration << " to insert, update and delete " << '\n';	*/
 
 	system("pause");
 }
 
 void stdMapTest()
 {
-	std::map<int, std::string>* stdMap = new std::map<int, std::string>;
+	std::map<int, int>* stdMap = new std::map<int, int>;
 	// PROCESS_COUNT insertions
 	for (int i = 0; i < PROCESS_COUNT; i++)
 	{
@@ -80,9 +65,9 @@ void myCMapTest()
 		// my implementation uses trees in opposition to balanced trees
 		// so it performs better when elements aren't ordered
 		myMap->Insert(key_i, rand() % PROCESS_COUNT);
-		myMap->Update(key_i, rand() % PROCESS_COUNT);
-		myMap[key_i + 1];
-		
+		// myMap->Update(key_i, rand() % PROCESS_COUNT);
+		// myMap[key_i + 1];
+		std::cout << myMap->chunksCount() << std::endl;
 	}
 	delete myMap;
 }
