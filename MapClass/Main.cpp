@@ -14,11 +14,11 @@ int main() {
 
 	CMap<std::string, int>* myMap = new CMap<std::string, int>();
 	
-	myMap->Insert("A",12);
+	myMap->Insert("A",5);
 	myMap->Insert("B", 12);
-	std::cout << myMap->Get("A");
-	auto x = "A";
-	myMap[x]; // Error
+	std::cout << myMap->Get("A") << std::endl;
+	std::string x = "A";
+	std::cout << (*myMap)[x] << std::endl; // Error
 
 	delete myMap;
 	/*std::clock_t start;
