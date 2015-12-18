@@ -6,17 +6,18 @@
 #ifndef CMAP_H
 #define CMAP_H
 
-#define ROOT_IDX 1
+// direvatives for easily modifying values
+#define ROOT_IDX (1)
 #define CHUNK_SIZE (4000)
-
-// TODO needs to changewhen switching to templates
-enum class ProcessResult { DELETED, NOT_FOUND, UPDATED, INSERTED, EMPTY, FOUND };
+// used to return the correct succes/failure code from an operation
+enum class ProcessResult { DELETED, NOT_FOUND, UPDATED, INSERTED, EMPTY, FOUND, OUT_OF_MEMORY, UNKNOWN_ERROR };
 
 template<typename K, typename V> class CMap
 {
 public:
-#pragma region Public methods
-	// elements and chunks count getters, mostly used for testing
+#pragma region Public methods, operators
+	// elements and chunks count getters, mostly used for testing, 
+	// but can be helpful for users memory management
 	int chunksCount() const
 	{
 		return _numOfChunks;
@@ -26,12 +27,14 @@ public:
 		return _numOfitems;
 	}
 	// CRUD functionality
-	V Get(K key);
-	void Insert(K newK, V newV);
-	void Update(K key, V newV);
-	void Erease(K key);
+	V Get(K key);	// doesn't return ProcessResult for easier access to elements (NULL -> not found, value -> found)
+	ProcessResult Insert(K newK, V newV);
+	ProcessResult Update(K key, V newV);
+	ProcessResult Erease(K key);
+
 	// Operators
-	V operator[](K&);
+	V operator[](K); // subscript operator for convinient access to elements
+
 	// Construcor and destructors
 	CMap();
 	~CMap();

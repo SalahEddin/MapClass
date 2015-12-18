@@ -5,12 +5,13 @@
 #include <map>
 #include <string>
 
-#define PROCESS_COUNT (300)
+#define PROCESS_COUNT (30000)
 void stdMapTest();
 void myCMapTest();
 
 int main() {
 
+	myCMapTest();
 
 	CMap<std::string, int>* myMap = new CMap<std::string, int>();
 	
@@ -21,6 +22,7 @@ int main() {
 	std::cout << (*myMap)[x] << std::endl; // Error
 
 	delete myMap;
+
 	/*std::clock_t start;
 	double duration;
 
