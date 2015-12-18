@@ -11,36 +11,13 @@ void myCMapTest();
 
 int main() {
 
-	myCMapTest();
-
-	CMap<std::string, int>* myMap = new CMap<std::string, int>();
-	
-	myMap->Insert("A",5);
-	myMap->Insert("B", 12);
-	std::cout << myMap->Get("A") << std::endl;
-	std::string x = "A";
-	std::cout << (*myMap)[x] << std::endl; // Error
-
-	delete myMap;
-
 	/*std::clock_t start;
 	double duration;
-
 	start = std::clock();
-
 	myCMapTest();
-
 	duration = (std::clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
 	std::cout << "my map required: " << duration << " to insert, update and delete " <<'\n';
-
-
-	start = std::clock();
-
-	stdMapTest();
-
-	duration = (std::clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
-	std::cout << "std::map required: " << duration << " to insert, update and delete " << '\n';	*/
-
+	*/
 	system("pause");
 }
 

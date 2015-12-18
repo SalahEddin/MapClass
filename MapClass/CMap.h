@@ -65,9 +65,6 @@ private:
 	// inner CRUD functionality
 	V _treeGet(int init_index, K key);
 	ProcessResult _treeUpdate(int init_index, K key, V newV);
-	// TODO in case of success returns a pointer to the element inserted and isAdded = true, 
-	// if updated isAdded = false with a valid pointer
-	// if it wasn't added, then return nullptr with message
 	ProcessResult _treeInsert(int init_index, K newKey, V newVal);
 	ProcessResult _treeDelete(int init_index, K key);
 #pragma endregion
@@ -96,7 +93,6 @@ private:
 	chunkStruct* _root;
 #pragma endregion
 };
-// TODO Switch to ProcessResult::enum
 #endif
 
 #include "CMap.cpp"

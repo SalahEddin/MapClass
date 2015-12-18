@@ -3,7 +3,6 @@
 #define CMAP_CPP
 
 #pragma region API
-// TODO return types success/failed
 template <typename K, typename V>
 V CMap<K, V>::Get(K key)
 {
@@ -292,8 +291,6 @@ ProcessResult CMap<K, V>::_treeDelete(int init_index, K key)
 template <typename K, typename V>
 V CMap<K, V>::operator[](K key)
 {
-	// TODO this method will lookup if the key exists, if yes, then returns the value. 
-	// If the key does not exist: 1.check if there's space, 2. then create a new key value pair
 	return _treeGet(ROOT_IDX, key);
 }
 #pragma endregion
